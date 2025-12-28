@@ -61,27 +61,31 @@
 graph TD
     User((👤 사용자))
 
-    subgraph Member [회원 관리 - 윤성원]
-        Join(회원가입)
-        Login(로그인)
-        Update(내 정보 수정)
-        Withdraw(회원 탈퇴)
-    end
+    subgraph System [가계부 시스템 (Household Ledger)]
+        direction TB
 
-    subgraph Ledger [가계부 - 정병진]
-        List(내역 조회)
-        Write(가계부 등록)
-        Edit(수정/삭제)
-        CheckCat(카테고리 확인)
-    end
+        subgraph Member [회원 관리 - 윤성원]
+            Join(회원가입)
+            Login(로그인)
+            Update(내 정보 수정)
+            Withdraw(회원 탈퇴)
+        end
 
-    subgraph Stats [통계 - 최현지]
-        MonthStats(월별 통계)
-        CatStats(카테고리별 통계)
-    end
+        subgraph Ledger [가계부 - 정병진]
+            List(내역 조회)
+            Write(가계부 등록)
+            Edit(수정/삭제)
+            CheckCat(카테고리 확인)
+        end
 
-    subgraph Notice [알림 - 김태형]
-        Alert(예산 초과 알림)
+        subgraph Stats [통계 - 최현지]
+            MonthStats(월별 통계)
+            CatStats(카테고리별 통계)
+        end
+
+        subgraph Notice [알림 - 김태형]
+            Alert(예산 초과 알림)
+        end
     end
 
     %% 사용자 액션
