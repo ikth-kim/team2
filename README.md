@@ -61,7 +61,7 @@
 graph TD
     User((👤 사용자))
 
-    subgraph System [가계부 시스템 (Household Ledger)]
+    subgraph System ["가계부 시스템 (Household Ledger)"]
         direction TB
 
         subgraph Member [회원 관리 - 윤성원]
