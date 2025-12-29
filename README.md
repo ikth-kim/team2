@@ -8,9 +8,9 @@
 |---|---|---|
 | **정진호** | **Team Leader** | **공통 설계 / DB / 로그인 / 통합** |
 | **윤성원** | Developer | **회원 관리** (가입, 수정, 탈퇴) |
-| **정병진** | Developer | **가계부 CRUD** (내역 등록/조회) |
+| **정병진** | Developer | **알림** (예산 초과 알림) |
 | **최현지** | Developer | **통계 & 조회** (차트, 필터링) |
-| **김태형** | Scribe / Dev | **알림** (서기 겸임) |
+| **김태형** | Developer | **가계부 CRUD** (내역 등록/조회) |
 
 ---
 
@@ -48,7 +48,7 @@
 - **회원 탈퇴**: `status_cd`를 'N'으로 변경 (Soft Delete).
 
 ### 2. 가계부 관리 (Ledger CRUD)
-*담당: 정병진*
+*담당: 김태형*
 - **카테고리**: 공통 코드(`comm_cd`)를 사용하여 수입/지출 분류.
 - **등록**: 날짜, 금액, 카테고리, 메모 입력.
 - **조회**: 전체 내역 최신순 조회.
@@ -61,7 +61,7 @@
 - **필터링**: 기간별, 카테고리별 내역 조회.
 
 ### 4. 알림 (Notification)
-*담당: 김태형*
+*담당: 정병진*
 - **알림**: 예산 초과 시 알림 로직 설계 및 구현.
 
 ---
@@ -91,7 +91,7 @@ graph LR
         end
 
         %% (2) 가계부 패키지
-        subgraph Ledger [가계부 - 정병진]
+        subgraph Ledger [가계부 - 김태형]
             direction TB
             List(내역 조회)
             Write(가계부/메모 등록)
@@ -106,7 +106,7 @@ graph LR
             CatStats(카테고리별 통계)
         end
 
-        subgraph Notice [알림 - 김태형]
+        subgraph Notice [알림 - 정병진]
             direction TB
             Alert(예산 초과 알림)
         end
@@ -197,7 +197,7 @@ erDiagram
     - `mapper/UserMapper.xml`: 추가 쿼리 필요 시 작성
 - **참고**: `LoginController.java`는 이미 완성되어 있으니 참고용으로만 보세요.
 
-### 2. **정병진** (가계부 CRUD)
+### 2. **김태형** (가계부 CRUD)
 - **작업 경로**: `src/main/java/com/team2/householdledger/ledger`
 - **수정해야 할 파일**:
     - `dto/LedgerDTO.java`: 필요 시 필드 추가
@@ -214,7 +214,7 @@ erDiagram
     - `controller/StatsController.java`: 월별 통계 API 추가 구현
 - **참고**: 복잡한 쿼리는 팀장(정진호)에게 질문하세요. DB 함수 `fn_get_comm_nm` 적극 활용!
 
-### 4. **김태형** (알림)
+### 4. **정병진** (알림)
 - **작업 경로**: `src/main/java/com/team2/householdledger/notice`
 - **수정해야 할 파일**:
     - `dto/NoticeDTO.java`: 알림 필드 확장
@@ -236,7 +236,7 @@ erDiagram
 |---|---|---|---|
 | **로그인 모달** | `main.html` (Modal 1) | **윤성원** | `activeModal === 'login'` |
 | **회원가입 모달** | `main.html` (Modal 2) | **윤성원** | `activeModal === 'join'` |
-| **내역 등록 모달** | `main.html` (Modal 3) | **정병진** | `activeModal === 'register'`, `memo` 필드 포함 |
+| **내역 등록 모달** | `main.html` (Modal 3) | **김태형** | `activeModal === 'register'`, `memo` 필드 포함 |
 | **통계 위젯** | `main.html` (Dashboard) | **최현지** | `Mock Data` 부분을 API로 대체 |
 
 ### 1. **윤성원** (로그인/회원가입)
@@ -245,7 +245,7 @@ erDiagram
     1.  **Form 전송 방식 (기본)**: `<form>` 태그에 `action="/login"` `method="post"` 속성 추가. (Vue 이벤트 `@submit.prevent`는 제거)
     2.  **AJAX 방식 (권장)**: 하단 `<script>` 내부 `submitLogin` 함수에 `fetch` 또는 `axios` 로직 작성.
 
-### 2. **정병진** (가계부 등록)
+### 2. **김태형** (가계부 등록)
 - **위치**: `main.html` 내부 `<!-- 3. LEDGER WRITE MODAL -->` 주석 찾기.
 - **연동 방법**:
     -   `<form>` 내부의 `input` 태그들에 `name="amount"`, `name="transDt"` 등 DTO 필드명과 일치하는 `name` 속성 추가.
