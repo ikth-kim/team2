@@ -14,6 +14,20 @@
 
 ---
 
+## 🖥 화면 구성 및 담당자 (Screen Layout & Responsibilities)
+
+### 1. 메인 화면 (Main Page)
+전체 레이아웃(`layout.html`)과 메인 대시보드는 **Glassmorphism** 디자인이 적용되어 있습니다.
+
+| 영역 | 설명 | 담당자 |
+|---|---|---|
+| **Header** | 로고 및 GNB (홈, 통계, 로그인) | 공통 (정진호) |
+| **Hero Section** | 환영 문구 및 주요 액션 버튼 | 공통 (정진호) |
+| **Dashboard** | 월별 지출, 오늘의 소비, 예산 현황 요약 카드 | **최현지** (데이터 연동) |
+| **Modals** | 로그인, 회원가입, 가계부 작성 팝업 | 하단 상세 참조 |
+
+---
+
 ##  기술 스택 (Tech Stack)
 
 - **Language**: Java 17
@@ -80,7 +94,7 @@ graph LR
         subgraph Ledger [가계부 - 정병진]
             direction TB
             List(내역 조회)
-            Write(가계부 등록)
+            Write(가계부/메모 등록)
             Edit(수정/삭제)
             CheckCat[카테고리 확인]
         end
@@ -160,6 +174,7 @@ erDiagram
         CHAR comm_cd FK "카테고리"
         INT amount "금액"
         DATE trans_dt "거래일"
+        VARCHAR memo "메모/비고"
     }
 
 
@@ -214,6 +229,15 @@ erDiagram
 ## 🎨 UI 연동 가이드 (Frontend Integration Guide)
 **팀장(정진호)**이 만들어둔 메인 화면(`main.html`)의 모달창과 본인의 기능을 연결하는 방법입니다.
 화면 코드는 `src/main/resources/templates/main.html`에 모두 모여 있습니다.
+
+### 📌 화면별 담당자 지정
+
+| 화면 요소 | 파일 위치 | 담당자 | 비고 |
+|---|---|---|---|
+| **로그인 모달** | `main.html` (Modal 1) | **윤성원** | `activeModal === 'login'` |
+| **회원가입 모달** | `main.html` (Modal 2) | **윤성원** | `activeModal === 'join'` |
+| **내역 등록 모달** | `main.html` (Modal 3) | **정병진** | `activeModal === 'register'`, `memo` 필드 포함 |
+| **통계 위젯** | `main.html` (Dashboard) | **최현지** | `Mock Data` 부분을 API로 대체 |
 
 ### 1. **윤성원** (로그인/회원가입)
 - **위치**: `main.html` 내부 `<!-- 1. LOGIN MODAL -->` 및 `<!-- 2. JOIN MODAL -->` 주석 찾기.
@@ -367,6 +391,7 @@ CREATE TABLE ledgers (
     comm_cd CHAR(5) NOT NULL,
     amount INT NOT NULL,
     trans_dt DATE NOT NULL,
+    memo VARCHAR(255), -- (구: description)
     status_cd CHAR(1) DEFAULT 'Y' CHECK (status_cd IN ('Y', 'N')),
     FOREIGN KEY (user_no) REFERENCES users(user_no),
     FOREIGN KEY (comm_cd) REFERENCES comm_code(comm_cd)

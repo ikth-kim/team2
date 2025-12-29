@@ -29,6 +29,7 @@ CREATE TABLE ledgers (
     comm_cd CHAR(5) NOT NULL,
     amount INT NOT NULL,
     trans_dt DATE NOT NULL,
+    memo VARCHAR(255),
     status_cd CHAR(1) DEFAULT 'Y' CHECK (status_cd IN ('Y', 'N')),
     FOREIGN KEY (user_no) REFERENCES users (user_no),
     FOREIGN KEY (comm_cd) REFERENCES comm_code (comm_cd)

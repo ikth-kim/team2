@@ -14,6 +14,7 @@ public class LedgerDTO {
     private String commCd; // comm_cd (FK - 카테고리 코드)
     private Integer amount; // amount (금액)
     private LocalDate transDt; // trans_dt (거래 날짜)
+    private String memo; // memo (메모/비고)
     private String statusCd; // status_cd (상태 'Y'/'N')
 
     // 추가 필드 (DB 컬럼 외)
