@@ -208,7 +208,36 @@ erDiagram
 - **참고**: `NoticeService.sendNotice()` 메서드는 다른 팀원이 호출해서 쓸 수 있게 설계하세요.
 
 
+
 ---
+
+## 🎨 UI 연동 가이드 (Frontend Integration Guide)
+**팀장(정진호)**이 만들어둔 메인 화면(`main.html`)의 모달창과 본인의 기능을 연결하는 방법입니다.
+화면 코드는 `src/main/resources/templates/main.html`에 모두 모여 있습니다.
+
+### 1. **윤성원** (로그인/회원가입)
+- **위치**: `main.html` 내부 `<!-- 1. LOGIN MODAL -->` 및 `<!-- 2. JOIN MODAL -->` 주석 찾기.
+- **연동 방법 (택 1)**:
+    1.  **Form 전송 방식 (기본)**: `<form>` 태그에 `action="/login"` `method="post"` 속성 추가. (Vue 이벤트 `@submit.prevent`는 제거)
+    2.  **AJAX 방식 (권장)**: 하단 `<script>` 내부 `submitLogin` 함수에 `fetch` 또는 `axios` 로직 작성.
+
+### 2. **정병진** (가계부 등록)
+- **위치**: `main.html` 내부 `<!-- 3. LEDGER WRITE MODAL -->` 주석 찾기.
+- **연동 방법**:
+    -   `<form>` 내부의 `input` 태그들에 `name="amount"`, `name="transDt"` 등 DTO 필드명과 일치하는 `name` 속성 추가.
+    -   `<form action="/ledger/add" method="post">` 처럼 컨트롤러 경로 지정.
+
+### 3. **최현지** (통계)
+- **위치**: `main.html` 하단 `<script>` 영역의 `Mock Data` 부분.
+- **연동 방법**:
+    -   현재 `setTimeout`으로 가짜 데이터가 들어가 있습니다.
+    -   페이지 로딩 시(`onMounted`) `fetch('/stats/summary')` 등을 호출하여 실제 DB 데이터를 가져오도록 수정하세요.
+
+### ⚠️ 주의사항
+- **디자인 유지**: `class="glass-card"`, `class="btn-primary"` 등 디자인 클래스는 **지우지 마세요.**
+- **Vue.js**: 화면의 열고 닫힘은 Vue.js가 담당합니다. 로직이 꼬이지 않게 **스크립트 부분 수정 시 주의**하세요.
+
+
 
 ## 🚀 개발 가이드 (Development Guide)
 
@@ -319,7 +348,7 @@ CREATE TABLE users (
     user_id VARCHAR(20) NOT NULL UNIQUE,
     user_pw VARCHAR(100) NOT NULL,
     user_nm VARCHAR(30) NOT NULL,
-    status_cd CHAR(1) DEFAULT 'Y',
+    status_cd CHAR(1) DEFAULT 'Y' CHECK (status_cd IN ('Y', 'N')),
     reg_dt DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -338,7 +367,7 @@ CREATE TABLE ledgers (
     comm_cd CHAR(5) NOT NULL,
     amount INT NOT NULL,
     trans_dt DATE NOT NULL,
-    status_cd CHAR(1) DEFAULT 'Y',
+    status_cd CHAR(1) DEFAULT 'Y' CHECK (status_cd IN ('Y', 'N')),
     FOREIGN KEY (user_no) REFERENCES users(user_no),
     FOREIGN KEY (comm_cd) REFERENCES comm_code(comm_cd)
 );
