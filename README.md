@@ -250,6 +250,11 @@ CREATE INDEX IDX_USERS_EMAIL ON USERS (EMAIL);
 
 ### 3.4 스키마 관리 흐름 (Schema Management Flow)
 
+> **⚠️ 아키텍처 핵심 (Core Architecture)**
+> **"물리적 테이블은 변하지 않습니다."**
+> 사용자가 화면에서 테이블을 생성하거나 컬럼을 수정하더라도, 실제 DB 내부에서는 **DDL(`CREATE`, `ALTER`, `DROP`)이 전혀 실행되지 않습니다.**
+> 모든 구조 변경은 `TBL_META`와 `COL_META` 테이블에 **데이터(Row)를 `INSERT/UPDATE/DELETE`** 하는 방식으로 처리되는 **논리적 변경**입니다.
+
 사용자 관점의 경험과 실제 내부 동작(Internal Mechanism)을 비교한 흐름입니다.
 
 #### 0️⃣ 전제 조건: 로그인
