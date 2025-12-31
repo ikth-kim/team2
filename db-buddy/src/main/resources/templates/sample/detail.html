@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Sample Detail</title>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <h1>Sample Detail</h1>
+    <div>
+        <label>ID:</label> <span th:text="${sample.id}">1</span><br />
+        <label>Table ID:</label> <span th:text="${sample.tableId}">10</span><br />
+        <label>Data (JSON):</label> <span th:text="${sample.dataJson}">{}</span><br />
+        <label>Active:</label> <span th:text="${sample.activeFl}">Y</span><br />
+        <label>Reg Date:</label> <span th:text="${sample.regDt}">2024-01-01</span><br />
+        <label>Chg Date:</label> <span th:text="${sample.chgDt}">2024-01-02</span><br />
+    </div>
+    <a th:href="@{/samples}">Back to List</a>
+</body>
+
+</html>

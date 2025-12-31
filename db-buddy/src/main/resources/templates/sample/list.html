@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Sample List</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h1>Sample List</h1>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Table ID</th>
+        <th>Data (JSON)</th>
+        <th>Active</th>
+        <th>Reg Date</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="sample : ${samples}">
+        <td th:text="${sample.id}">1</td>
+        <td th:text="${sample.tableId}">10</td>
+        <td th:text="${sample.dataJson}">{}</td>
+        <td th:text="${sample.activeFl}">Y</td>
+        <td th:text="${sample.regDt}">2024-01-01</td>
+        <td>
+            <a th:href="@{/samples/{id}(id=${sample.id})}">View</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
