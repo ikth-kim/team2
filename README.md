@@ -175,6 +175,57 @@ erDiagram
     TBL_META ||--|{ TBL_SAMPLE : "contains data for"
 ```
 
+### 3.3 DDL (Data Definition Language)
+
+```sql
+-- 1. Users Table
+CREATE TABLE USERS (
+    USER_ID INT AUTO_INCREMENT PRIMARY KEY COMMENT '사용자 고유 ID',
+    USER_NM VARCHAR(50) NOT NULL COMMENT '사용자 이름',
+    EMAIL VARCHAR(100) NOT NULL UNIQUE COMMENT '사용자 이메일',
+    PASSWD VARCHAR(100) NOT NULL COMMENT '암호화된 비밀번호',
+    ACTIVE_FL CHAR(1) DEFAULT 'Y' COMMENT '활성 여부 (Y/N)',
+    REG_DT TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '가입일자',
+    CONSTRAINT CK_USERS_ACTIVE_FL CHECK (ACTIVE_FL IN ('Y', 'N')),
+    CONSTRAINT CK_USERS_EMAIL CHECK (EMAIL LIKE '%@%')
+) ENGINE = InnoDB COMMENT = '사용자 테이블';
+
+-- 2. Tables Metadata
+CREATE TABLE TBL_META (
+    TBL_ID INT AUTO_INCREMENT PRIMARY KEY COMMENT '테이블 고유 ID',
+    TBL_NM VARCHAR(50) NOT NULL COMMENT '테이블 이름',
+    TBL_DESC VARCHAR(255) COMMENT '테이블 설명',
+    REG_DT TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '등록일자'
+) ENGINE = InnoDB COMMENT = '테이블 메타 데이터';
+
+-- 3. Columns Metadata
+CREATE TABLE COL_META (
+    COL_ID INT AUTO_INCREMENT PRIMARY KEY COMMENT '컬럼 고유 ID',
+    TBL_ID INT NOT NULL COMMENT '테이블 ID(FK)',
+    COL_NM VARCHAR(50) NOT NULL COMMENT '컬럼 이름',
+    DATA_TYPE VARCHAR(50) NOT NULL COMMENT '데이터 타입',
+    NULLABLE CHAR(1) DEFAULT 'Y' COMMENT 'NULL 허용 여부 (Y/N)',
+    ORDER_NO INT DEFAULT 0 COMMENT '컬럼 순서',
+    REG_DT TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '등록일자',
+    CONSTRAINT CK_COL_META_NULLABLE CHECK (NULLABLE IN ('Y', 'N')),
+    CONSTRAINT COL_META_FK1 FOREIGN KEY (TBL_ID) REFERENCES TBL_META (TBL_ID) ON DELETE CASCADE
+) ENGINE = InnoDB COMMENT = '컬럼 메타 데이터';
+
+-- 4. Sample Data Table
+CREATE TABLE TBL_SAMPLE (
+    SAMPLE_ID INT AUTO_INCREMENT PRIMARY KEY COMMENT '데이터 고유 ID',
+    TBL_ID INT NOT NULL COMMENT '테이블 ID(FK)',
+    DATA_JSON JSON NOT NULL COMMENT '컬럼-값 매핑(JSON)',
+    ACTIVE_FL CHAR(1) DEFAULT 'Y' COMMENT '활성 여부 (Y/N)',
+    REG_DT TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '등록일자',
+    CHG_DT TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '수정일자',
+    CONSTRAINT CK_TBL_SAMPLE_ACTIVE_FL CHECK (ACTIVE_FL IN ('Y', 'N')),
+    CONSTRAINT TBL_SAMPLE_FK1 FOREIGN KEY (TBL_ID) REFERENCES TBL_META (TBL_ID) ON DELETE CASCADE
+) ENGINE = InnoDB COMMENT = '샘플 CRUD 학습용 데이터';
+
+CREATE INDEX IDX_USERS_EMAIL ON USERS (EMAIL);
+```
+
 ### 테이블 역할 설명
 
 | 테이블 명 | 역할 설명 | 비고 |
@@ -188,7 +239,7 @@ erDiagram
 > 이 프로젝트는 사용자가 정의한 테이블과 컬럼 구조가 수시로 변경될 수 있는 **가상 DBMS환경**입니다.
 > 매번 물리적인 `CREATE TABLE` / `ALTER TABLE`을 수행하는 대신, **메타데이터(`TBL_META`, `COL_META`)로 구조를 정의**하고 **실제 데이터는 `TBL_SAMPLE`의 JSON 컬럼에 유연하게 저장**하는 방식을 채택하여, 안전하고 유연한 스키마 관리를 구현했습니다.
 
-### 3.3 주요 기능 흐름 (Key Feature Flow)
+### 3.4 주요 기능 흐름 (Key Feature Flow)
 
 핵심 기능인 **동적 테이블 조회**와 **데이터 저장**이 내부적으로 어떻게 동작하는지 보여주는 흐름도입니다.
 
@@ -244,13 +295,14 @@ sequenceDiagram
     Controller-->>User: 6. 목록 화면 이동
 ```
 > **📝 저장되는 JSON 데이터 예시 (Example Data)**
-> 사용자가 '학생' 테이블에 데이터를 입력했을 때, `TBL_SAMPLE`의 `DATA_JSON` 컬럼에는 아래와 같이 저장됩니다.
+> 사용자가 '가계부(Ledger)' 테이블에 데이터를 입력했을 때, `TBL_SAMPLE`의 `DATA_JSON` 컬럼에는 아래와 같이 저장됩니다.
 > ```json
 > {
->   "STUDENT_NM": "김철수",
->   "GRADE": 4,
->   "MAJOR": "컴퓨터공학",
->   "IS_ENROLLED": true
+>   "TRANS_DT": "2024-05-01",
+>   "CATEGORY": "식비",
+>   "AMOUNT": 12000,
+>   "CONTENT": "점심 식사 (김치찌개)",
+>   "METHOD": "카드"
 > }
 > ```
 > *`TBL_META`에 정의된 컬럼명(Key)과 사용자 입력값(Value)이 매핑되어 저장됩니다.*
